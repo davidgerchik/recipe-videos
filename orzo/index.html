@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#4A2C1A">
+<title>Creamy Sun-Dried Tomato Chicken Orzo</title>
+<style>
+@font-face { font-family: Fraunces; src: url(fonts/fraunces.woff2) format('woff2'); font-weight: 100 900; font-display: block; }
+@font-face { font-family: Nunito; src: url(fonts/nunito.woff2) format('woff2'); font-weight: 200 1000; font-display: block; }
+:root { --cream:#FBF3E4; --paper:#FFFDF7; --tomato:#D8432E; --basil:#5E8C3A; --gold:#E9A923; --ink:#4A2C1A; --line:#E8D9BC; --soft:#F3E6CD; --muted:#8A6E57; --dark:#2E1B10; }
+html, body { margin:0; height:100%; background:var(--dark); overflow:hidden; }
+body { font-family: Nunito, -apple-system, "Helvetica Neue", Arial, sans-serif; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+#stage { position:absolute; left:0; top:0; width:1920px; height:1080px; overflow:hidden; background:var(--cream); color:var(--ink); transform-origin:0 0; }
+[data-layout=tall] #stage { width:1080px; height:1920px; }
+#bar { position:absolute; left:0; top:0; height:10px; background:var(--tomato); width:0; z-index:5; }
+#subs { position:absolute; left:0; right:0; bottom:0; height:130px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; text-align:center; padding:0 120px; font-size:38px; line-height:1.3; font-weight:600; color:var(--cream); background:var(--ink); }
+[data-layout=tall] #subs { height:180px; padding:0 50px; font-size:44px; }
+[data-layout=tall] #subs.long { font-size:35px; }
+.scene { position:absolute; left:0; right:0; top:10px; bottom:130px; display:none; flex-direction:column; }
+[data-layout=tall] .scene { bottom:180px; }
+.scene.on { display:flex; }
+svg .a, svg .lp { transform-box:fill-box; transform-origin:center; }
+svg text { font-family: Nunito, sans-serif; }
+
+/* header */
+.hdr { display:flex; align-items:center; gap:28px; padding:34px 70px 10px; flex:none; }
+.pill { background:var(--tomato); color:#fff; font-weight:800; font-size:34px; padding:10px 30px; border-radius:999px; white-space:nowrap; }
+.ttl { font-family:Fraunces, serif; font-weight:600; font-size:58px; letter-spacing:-0.5px; white-space:nowrap; }
+.cnt { margin-left:auto; font-size:34px; font-weight:800; color:var(--muted); white-space:nowrap; }
+[data-layout=tall] .hdr { padding:40px 50px 10px; gap:24px; }
+[data-layout=tall] .pill { font-size:34px; padding:10px 26px; }
+[data-layout=tall] .ttl { font-size:54px; }
+[data-layout=tall] .cnt { font-size:38px; }
+
+/* cook scene: drawing + action panel */
+.body { flex:1; display:flex; min-height:0; }
+.art { flex:0 0 1010px; display:flex; align-items:center; justify-content:center; padding-left:40px; box-sizing:border-box; min-height:0; }
+.art svg { width:100%; height:100%; max-height:800px; display:block; }
+.info { flex:1; padding:34px 70px 20px 30px; min-width:0; }
+[data-layout=tall] .body { flex-direction:column; }
+[data-layout=tall] .art { flex:0 0 790px; padding:0 30px; }
+[data-layout=tall] .info { padding:10px 56px 0; }
+.head { font-family:Fraunces, serif; font-weight:600; font-size:66px; line-height:1.12; letter-spacing:-0.5px; margin-bottom:28px; }
+[data-layout=tall] .head { font-size:76px; }
+.chips { display:flex; flex-wrap:wrap; gap:16px; margin-bottom:28px; }
+.chip { background:var(--paper); border:3px solid var(--line); border-radius:20px; padding:10px 24px; font-size:38px; font-weight:600; }
+.chip b { color:var(--tomato); font-weight:800; margin-right:6px; }
+[data-layout=tall] .chip { font-size:46px; padding:12px 26px; }
+.tip { background:#FFF1C2; border:3px solid var(--gold); border-radius:24px; padding:18px 28px 20px; max-width:770px; margin-bottom:24px; box-sizing:border-box; }
+.tip-term { font-family:Fraunces, serif; font-weight:700; font-size:42px; color:#7A4B00; display:flex; align-items:center; gap:14px; }
+.tip-term svg { width:42px; height:42px; flex:none; }
+.tip-def { font-size:36px; line-height:1.3; margin-top:6px; color:#5A3A10; font-weight:600; }
+[data-layout=tall] .tip { max-width:none; }
+[data-layout=tall] .tip-term { font-size:48px; }
+[data-layout=tall] .tip-term svg { width:48px; height:48px; }
+[data-layout=tall] .tip-def { font-size:42px; }
+.timer { display:flex; align-items:center; gap:26px; background:var(--paper); border:4px solid var(--tomato); border-radius:26px; padding:16px 34px 16px 20px; margin-bottom:26px; width:fit-content; }
+.ring { width:120px; height:120px; flex:none; }
+.ring .trk { fill:none; stroke:var(--soft); stroke-width:12; }
+.ring .arc { fill:none; stroke:var(--tomato); stroke-width:12; stroke-linecap:round; }
+.ring .hand { stroke:var(--ink); stroke-width:6; stroke-linecap:round; fill:none; }
+.tm-big { font-family:Fraunces, serif; font-weight:700; font-size:54px; line-height:1; }
+.tm-sub { font-size:32px; font-weight:700; color:var(--muted); margin-top:6px; }
+.tm-live { display:none; font-size:32px; font-weight:800; color:var(--tomato); margin-top:6px; font-variant-numeric:tabular-nums; }
+.live .tm-live { display:block; }
+.live .timer, .live .ck { cursor:pointer; }
+[data-layout=tall] .ring { width:140px; height:140px; }
+[data-layout=tall] .tm-big { font-size:64px; }
+[data-layout=tall] .tm-sub, [data-layout=tall] .tm-live { font-size:38px; }
+.stats { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:26px; }
+.stat { background:var(--paper); border:3px solid var(--line); border-radius:26px; padding:26px 16px; text-align:center; }
+.stat .num { font-family:Fraunces, serif; font-weight:700; font-size:64px; color:var(--tomato); line-height:1; white-space:nowrap; }
+.stat .unit { font-size:34px; font-weight:800; margin-top:12px; }
+[data-layout=tall] .stat .num { font-size:76px; }
+[data-layout=tall] .stat .unit { font-size:40px; }
+
+/* get-ready checklist */
+.ready { flex:1; display:grid; grid-template-columns:1.25fr 0.9fr 1.15fr 1.05fr; gap:10px 40px; padding:18px 70px; align-content:start; }
+.grp h3 { font-family:Fraunces, serif; font-size:40px; font-weight:700; color:var(--tomato); margin:0 0 10px; }
+.ck { display:flex; align-items:flex-start; gap:16px; font-size:32px; line-height:1.25; font-weight:600; padding:9px 0; }
+.ck .box { flex:none; width:40px; height:40px; border:4px solid var(--ink); border-radius:10px; background:var(--paper); box-sizing:border-box; }
+.ck svg { width:100%; height:100%; display:block; }
+.tick { fill:none; stroke:var(--basil); stroke-width:4.5; stroke-linecap:round; stroke-linejoin:round; opacity:0; }
+.ck.done .tick { opacity:1; }
+.ck.done .lbl { opacity:.5; }
+.ck b { font-weight:800; }
+[data-layout=tall] .ready { grid-template-columns:1fr 1fr; padding:24px 50px; gap:34px 36px; }
+[data-layout=tall] .grp h3 { font-size:46px; }
+[data-layout=tall] .ck { font-size:36px; padding:11px 0; }
+[data-layout=tall] .ck .box { width:46px; height:46px; }
+[data-layout=tall] .g0 { grid-column:1; grid-row:1; }
+[data-layout=tall] .g1 { grid-column:1; grid-row:2; }
+[data-layout=tall] .g2 { grid-column:2; grid-row:1; }
+[data-layout=tall] .g3 { grid-column:2; grid-row:2; }
+
+/* title and end */
+.title-wrap { flex:1; display:flex; align-items:center; min-height:0; }
+.hero { flex:0 0 880px; padding-left:70px; box-sizing:border-box; }
+.hero svg { width:100%; height:auto; display:block; }
+.title-txt { flex:1; padding:0 90px 0 50px; }
+.kicker { font-size:36px; font-weight:800; color:var(--tomato); text-transform:uppercase; letter-spacing:3px; }
+.title-txt h1 { font-family:Fraunces, serif; font-weight:700; font-size:100px; line-height:1.03; margin:18px 0 28px; letter-spacing:-2px; }
+.sub { font-size:44px; font-weight:700; color:var(--muted); line-height:1.3; }
+[data-layout=tall] .title-wrap { flex-direction:column; justify-content:center; text-align:center; }
+[data-layout=tall] .hero { flex:none; width:900px; padding:0; }
+[data-layout=tall] .title-txt { flex:none; padding:40px 60px 0; }
+[data-layout=tall] .title-txt h1 { font-size:108px; }
+[data-layout=tall] .sub { font-size:50px; }
+
+/* live controls (real pixels, outside the scaled stage) */
+#ctl { display:none; }
+.live #ctl { display:block; position:fixed; left:0; right:0; bottom:0; background:var(--dark); padding:8px 10px calc(8px + env(safe-area-inset-bottom)); z-index:20; }
+#btns { display:flex; gap:8px; max-width:900px; margin:0 auto; }
+#btns button { flex:1; height:60px; border:0; border-radius:16px; font:800 18px Nunito, sans-serif; background:#5A3A26; color:var(--cream); cursor:pointer; }
+#btns #b-next { flex:2.2; background:var(--tomato); color:#fff; font-size:22px; }
+#btns button:disabled { opacity:.35; }
+.wait #b-next:not(:disabled) { animation:nudge 1.4s ease-in-out infinite; }
+@keyframes nudge { 50% { background:#F0603F; transform:scale(1.02); } }
+#tray { display:flex; flex-wrap:wrap; gap:6px; max-width:900px; margin:0 auto; }
+#tray:not(:empty) { margin-bottom:8px; }
+.tchip { display:flex; align-items:center; gap:8px; background:var(--cream); color:var(--ink); border-radius:12px; padding:6px 6px 6px 12px; font:700 15px Nunito, sans-serif; }
+.tchip b { font:800 18px Nunito, sans-serif; font-variant-numeric:tabular-nums; color:var(--tomato); }
+.tchip.rung { background:var(--tomato); color:#fff; animation:ring .7s ease-in-out infinite alternate; }
+.tchip.rung b { color:#fff; }
+@keyframes ring { to { background:#F0603F; } }
+.tchip button { border:0; width:30px; height:30px; border-radius:8px; background:rgba(74,44,26,.14); color:inherit; font:800 18px/1 Nunito, sans-serif; cursor:pointer; }
+#start { position:fixed; inset:0; background:rgba(46,27,16,.88); z-index:30; display:flex; align-items:center; justify-content:center; padding:24px; }
+.st-card { background:var(--cream); border-radius:24px; padding:28px 24px 24px; max-width:420px; text-align:center; color:var(--ink); }
+.st-kicker { font:800 14px Nunito, sans-serif; letter-spacing:2px; text-transform:uppercase; color:var(--tomato); }
+.st-title { font:700 30px/1.15 Fraunces, serif; margin:8px 0 12px; }
+.st-hint { font:600 16px/1.4 Nunito, sans-serif; color:var(--muted); margin-bottom:20px; }
+#b-start { display:block; width:100%; height:60px; border:0; border-radius:16px; background:var(--tomato); color:#fff; font:800 22px Nunito, sans-serif; cursor:pointer; }
+#b-reset { display:block; width:100%; margin-top:10px; height:44px; border:0; background:none; color:var(--muted); font:700 16px Nunito, sans-serif; text-decoration:underline; cursor:pointer; }
+</style></head>
+<body>
+<div id="stage"><div id="bar"></div><div id="subs"></div></div>
+<script>
+// Flat, top-down kitchen drawings for the orzo recipe. Pure string builders (SVG markup), viewBox 0 0 1000 760.
+// Timing attributes are read by the player: data-in / data-out = "step", "step+ms" or "step@fraction of speech".
+(function () {
+  const rng = seed => () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const f = n => Math.round(n * 10) / 10;
+  const svg = (body, vb = '0 0 1000 760') => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
+  const A = (i, o, fx, body) => `<g class="a"${i != null ? ` data-in="${i}"` : ''}${o != null ? ` data-out="${o}"` : ''}${fx ? ` data-fx="${fx}"` : ''}>${body}</g>`;
+  const Lp = (kind, ph, body, o) => `<g class="${kind === 'sway' ? 'sw' : 'lp'}" data-loop="${kind}" data-ph="${ph}"${o ? ` data-o="${o}"` : ''}>${body}</g>`;
+  const at = (x, y, r, body, s) => `<g transform="translate(${f(x)} ${f(y)})${r ? ` rotate(${f(r)})` : ''}${s && s !== 1 ? ` scale(${s})` : ''}">${body}</g>`;
+  // n points inside an ellipse, at least `min` apart
+  const scatter = (n, cx, cy, rx, ry, seed, min) => { const r = rng(seed), pts = []; let tries = 0;
+    while (pts.length < n && tries++ < n * 500) { const a = r() * 6.2832, d = Math.sqrt(r()), x = cx + Math.cos(a) * d * rx, y = cy + Math.sin(a) * d * ry;
+      if (pts.every(p => (p.x - x) ** 2 + (p.y - y) ** 2 > min * min)) pts.push({ x, y, r: r() * 360 }); }
+    return pts; };
+  const put = (pts, shape, s) => pts.map((p, i) => at(p.x, p.y, p.r, typeof shape === 'function' ? shape(p, i) : shape, s)).join('');
+  // show the points in a few groups, one after the other
+  const stag = (pts, step, f0, f1, fx, shape, out = null, groups = 6, s = 1) => { const n = Math.min(groups, pts.length); let h = '';
+    for (let g = 0; g < n; g++) h += A(`${step}@${(f0 + (f1 - f0) * g / n).toFixed(2)}`, out, fx, put(pts.filter((_, i) => i % n === g), shape, s));
+    return h; };
+
+  // ---------- shapes (drawn around 0,0) ----------
+  const board = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="40" fill="#DDAE6C" stroke="#B98545" stroke-width="6"/>
+    <path d="M${x + 60} ${y + h * 0.3} H${x + w - 110} M${x + 90} ${y + h * 0.64} H${x + w - 50}" stroke="#CF9C58" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <circle cx="${x + w - 52}" cy="${y + 52}" r="16" fill="#FBF3E4" stroke="#B98545" stroke-width="5"/>`;
+  const knife = `<rect x="-120" y="-17" width="128" height="34" rx="12" fill="#5B3A26"/><circle cx="-90" cy="0" r="4" fill="#C9A27A"/><circle cx="-40" cy="0" r="4" fill="#C9A27A"/>
+    <path d="M0 -20 H170 Q232 -8 250 22 H0 Z" fill="#E3E8EC" stroke="#9AA3AD" stroke-width="4" stroke-linejoin="round"/>`;
+  const breast = `<path d="M-92 -8 C-92 -62 -30 -78 28 -62 C84 -46 108 0 88 44 C66 84 -10 78 -56 56 C-82 42 -92 20 -92 -8 Z" fill="#F6BBA9" stroke="#E39C8A" stroke-width="6"/>
+    <path d="M-58 -30 C-30 -48 10 -46 40 -30" stroke="#FBD6CA" stroke-width="8" stroke-linecap="round" fill="none"/>`;
+  const pieceRaw = `<rect x="-26" y="-21" width="52" height="42" rx="15" fill="#F6BBA9" stroke="#E39C8A" stroke-width="4"/><path d="M-12 -9 H8" stroke="#FBD6CA" stroke-width="6" stroke-linecap="round"/>`;
+  const pieceGold = `<rect x="-26" y="-21" width="52" height="42" rx="15" fill="#E0A650" stroke="#B5762A" stroke-width="4"/><path d="M-14 -7 L10 -11 M-12 7 L13 3" stroke="#A8651F" stroke-width="5" stroke-linecap="round"/>`;
+  const specks = `<circle cx="-11" cy="-8" r="3" fill="#B5451F"/><circle cx="8" cy="5" r="3" fill="#4F7A2A"/><circle cx="13" cy="-10" r="2.6" fill="#3B3531"/><circle cx="-6" cy="10" r="2.6" fill="#B5451F"/><circle cx="1" cy="-2" r="2.4" fill="#4F7A2A"/>`;
+  const onionHalf = `<circle r="74" fill="#F4E3B5" stroke="#D29A45" stroke-width="8"/><circle r="52" fill="none" stroke="#E2C58A" stroke-width="5"/><circle r="32" fill="none" stroke="#E2C58A" stroke-width="5"/><circle r="12" fill="#E2C58A"/>`;
+  const dice = `<rect x="-9" y="-9" width="18" height="18" rx="4" fill="#FBF3D6" stroke="#DCC27F" stroke-width="2.5"/>`;
+  const clove = `<path d="M0 -30 C20 -14 22 14 0 28 C-22 14 -20 -14 0 -30 Z" fill="#FFF8E8" stroke="#D2BE95" stroke-width="4"/><path d="M0 -18 V14" stroke="#E6D7B4" stroke-width="3" stroke-linecap="round"/>`;
+  const mince = `<rect x="-5.5" y="-4.5" width="11" height="9" rx="2.5" fill="#FFF6DC" stroke="#D2BE95" stroke-width="2"/>`;
+  const sdt = `<ellipse rx="34" ry="23" fill="#B8321F" stroke="#8B2213" stroke-width="4"/><path d="M-20 -6 C-8 -12 6 -2 20 -8 M-18 8 C-4 2 8 12 20 6" stroke="#8B2213" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  const strip = `<rect x="-13" y="-5.5" width="26" height="11" rx="5" fill="#C43A24" stroke="#8B2213" stroke-width="2.5"/>`;
+  const grain = `<ellipse rx="11.5" ry="4.8" fill="#FFF1C4" stroke="#DDC077" stroke-width="1.8"/>`;
+  const leaf = `<path d="M0 -44 C32 -30 36 14 0 46 C-36 14 -32 -30 0 -44 Z" fill="#62A03C" stroke="#3F6F22" stroke-width="4"/><path d="M0 -32 V38 M0 -8 L14 -20 M0 8 L-14 -4 M0 20 L12 10" stroke="#3F6F22" stroke-width="3" stroke-linecap="round" fill="none"/>`;
+  const wilted = `<path d="M-4 -24 C22 -22 26 6 6 24 C-20 20 -26 -8 -4 -24 Z" fill="#3F7A28" stroke="#2A5318" stroke-width="3.5"/><path d="M-2 -14 C4 -2 4 8 4 16" stroke="#2A5318" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  const fleck = `<rect x="-6" y="-2.5" width="12" height="5" rx="2" fill="#FFF8D6" stroke="#E0C56E" stroke-width="1.5"/>`;
+  const skillet = (cx, cy, r) => `<rect x="${cx + r - 14}" y="${cy - 24}" width="250" height="48" rx="22" fill="#2B2826"/><circle cx="${cx + r + 200}" cy="${cy}" r="9" fill="#FBF3E4"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#35322F"/><circle cx="${cx}" cy="${cy}" r="${r - 24}" fill="#4C4845"/>
+    <path d="M${cx - r + 62} ${cy - 70} A${r - 62} ${r - 62} 0 0 1 ${cx - 70} ${cy - r + 62}" stroke="#625D59" stroke-width="10" fill="none" stroke-linecap="round"/>`;
+  const pot = (cx, cy, r) => `<rect x="${cx - r - 52}" y="${cy - 38}" width="80" height="76" rx="22" fill="#8C8379"/><rect x="${cx + r - 28}" y="${cy - 38}" width="80" height="76" rx="22" fill="#8C8379"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#A69D92"/><circle cx="${cx}" cy="${cy}" r="${r - 22}" fill="#D3CBC0"/><circle cx="${cx}" cy="${cy}" r="${r - 26}" fill="none" stroke="#BDB4A8" stroke-width="8"/>`;
+  const spoon = `<rect x="-300" y="-10" width="300" height="20" rx="10" fill="#C98C4E" stroke="#9A6431" stroke-width="4"/><ellipse cx="-338" cy="0" rx="46" ry="32" fill="#D59A5C" stroke="#9A6431" stroke-width="4"/><ellipse cx="-342" cy="0" rx="28" ry="18" fill="#C28447"/>`;
+  const stir = ph => Lp('sway', ph, at(830, 650, 37, spoon), '830,650');
+  const shaker = color => `<rect x="-30" y="-50" width="60" height="84" rx="12" fill="${color}" stroke="#4A2C1A" stroke-width="4"/><rect x="-22" y="-32" width="44" height="34" rx="6" fill="#FFFDF7" opacity=".9"/>
+    <rect x="-33" y="34" width="66" height="20" rx="6" fill="#9A9590" stroke="#4A2C1A" stroke-width="4"/>`;
+  // a shaker tipped over the food, with falling dots
+  const shake = (x, y, color, dot, ph) => Lp('shake', ph, at(x, y, 0, shaker(color))) +
+    [0, 1, 2, 3].map(i => Lp('fall', f(ph / 7 + i * 0.25), `<circle cx="${x - 18 + i * 12}" cy="${y + 66}" r="4.5" fill="${dot}"/>`)).join('');
+  const flame = lit => `<path d="M0 -17 C10 -7 14 1 10 10 C7 18 -7 18 -10 10 C-13 3 -8 -1 -6 -6 C-3 -3 -1 -2 0 -17 Z" fill="${lit ? '#E9772B' : '#E8D9BC'}"/>`;
+  const heat = (n, label) => at(24, 18, 0, `<rect width="${172 + label.length * 17}" height="64" rx="32" fill="#FFFDF7" stroke="#E8D9BC" stroke-width="4"/>${[0, 1, 2].map(i => at(42 + i * 34, 34, 0, flame(i < n))).join('')}
+    <text x="146" y="43" font-size="30" font-weight="800" fill="#4A2C1A">${label}</text>`);
+  const thermo = `<path d="M0 0 L-118 92" stroke="#9AA3AD" stroke-width="10" stroke-linecap="round"/><circle r="64" fill="#FFFDF7" stroke="#4A2C1A" stroke-width="6"/>
+    <text y="0" text-anchor="middle" font-size="34" font-weight="900" fill="#D8432E">165°F</text><text y="30" text-anchor="middle" font-size="21" font-weight="800" fill="#8A6E57">inside</text>`;
+  const carton = (color, band, label) => `<path d="M-50 -90 L-30 -122 H30 L50 -90 Z" fill="${color}" stroke="#4A2C1A" stroke-width="5" stroke-linejoin="round"/><rect x="-50" y="-90" width="100" height="162" rx="6" fill="${color}" stroke="#4A2C1A" stroke-width="5"/>
+    <rect x="-50" y="-56" width="100" height="62" fill="${band}"/><text y="-14" text-anchor="middle" font-size="27" font-weight="900" fill="#fff">${label}</text><rect x="-50" y="-90" width="100" height="162" rx="6" fill="none" stroke="#4A2C1A" stroke-width="5"/>`;
+  // a carton tipped at the top right, with a stream into the pot
+  const pour = (step, color, band, label, stream, f0 = 0.15, f1 = 0.9) => A(String(step), String(step + 1), 'slide', at(842, 152, -50, carton(color, band, label))) +
+    A(`${step}@${f0}`, `${step}@${f1}`, null, `<path d="M731 98 Q 690 120 664 300" stroke="${stream}" stroke-width="22" stroke-linecap="round" fill="none"/>`);
+  const wisp = `<path d="M0 0 C-16 -20 16 -40 0 -62" stroke="#FFF8EA" stroke-width="9" stroke-linecap="round" fill="none"/>`;
+  const steam = (pts, i, o) => A(i, o, null, pts.map((p, k) => Lp('steam', f(k / pts.length), at(p[0], p[1], 0, wisp))).join(''));
+  const plate = `<circle r="262" fill="#FFFFFF" stroke="#E0D2B5" stroke-width="8"/><circle r="212" fill="#FBF6EA" stroke="#EADFC8" stroke-width="5"/>`;
+  const star = `<path d="M0 -22 L6 -6 L22 0 L6 6 L0 22 L-6 6 L-22 0 L-6 -6 Z" fill="#E9A923"/>`;
+
+  // ---------- the pot at different moments ----------
+  const PC = [500, 392, 285];                       // pot centre and radius
+  const inPot = (n, seed, min, r = 222) => scatter(n, PC[0], PC[1], r, r, seed, min);
+  const P = { onion: inPot(40, 41, 27), garlic: inPot(34, 42, 22), strips: inPot(30, 43, 30), orzo: inPot(125, 77, 17, 232),
+    leaves: inPot(15, 55, 74, 195), wilt: inPot(20, 56, 50, 215), flecks: inPot(46, 57, 24), chick: inPot(20, 91, 64, 205) };
+  const liquid = (color, r = 258) => `<circle cx="${PC[0]}" cy="${PC[1]}" r="${r}" fill="${color}"/>`;
+  const aromatics = put(P.onion, dice) + put(P.garlic, mince) + put(P.strips, strip);
+
+  const ART = {};
+
+  // Step 1: cut, season, heat oil, cook in batches, set aside
+  ART.chicken = () => {
+    const raw = scatter(16, 420, 392, 232, 160, 11, 64), pan = scatter(9, 400, 400, 180, 180, 23, 96), rest = scatter(26, 500, 392, 168, 168, 31, 57);
+    return svg(
+      A(null, '2', null,
+        board(120, 150, 620, 480) + A('0', '2', 'slide', at(830, 540, -90, knife)) +
+        A(null, '0@0.5', null, at(300, 320, -12, breast) + at(500, 400, 28, breast) + at(330, 500, 160, breast, 0.9)) +
+        stag(raw, 0, 0.5, 0.85, 'pop', pieceRaw + A('1@0.4', null, null, specks), null, 8) +
+        A('1', '2', 'drop', shake(290, 86, '#7C9A4A', '#4F7A2A', 0) + shake(430, 86, '#C0391F', '#B5451F', 2) + shake(570, 86, '#EAD9A8', '#D9C48A', 4))) +
+      A('2', '4', null,
+        skillet(400, 400, 272) + A('2@0.35', null, null, `<circle cx="400" cy="400" r="232" fill="#F2C84B" opacity=".3"/>` +
+          Lp('pulse', 0, `<ellipse cx="330" cy="330" rx="46" ry="20" fill="#F7DD7E" opacity=".55"/>`) + Lp('pulse', 2, `<ellipse cx="470" cy="470" rx="36" ry="16" fill="#F7DD7E" opacity=".55"/>`)) +
+        pan.map((p, i) => A(`3@${(0.04 + 0.03 * i).toFixed(2)}`, null, 'drop', at(p.x, p.y, p.r, pieceRaw + specks + A('3@0.62', null, null, pieceGold)))).join('') +
+        steam([[300, 300], [470, 280], [380, 440], [520, 430]], '3@0.3', null) +
+        A('3@0.72', null, 'pop', at(700, 170, 0, thermo))) +
+      A('2', '4', null, heat(3, 'medium-high')) +
+      A('4', null, 'pop', at(500, 392, 0, plate) + put(rest, pieceGold)));
+  };
+
+  // Step 2: dice, mince, chop, then build the orzo in the pot
+  ART.orzo = () => {
+    const onionBits = scatter(36, 310, 318, 150, 100, 5, 25), garlicBits = scatter(40, 600, 300, 92, 76, 7, 15), tomStrips = scatter(34, 430, 522, 215, 62, 9, 26);
+    const cloves = [[560, 270, -20], [620, 300, 15], [575, 340, 40], [650, 255, -5], [640, 350, 70]];
+    const toms = [[260, 505, 10], [340, 540, -20], [420, 500, 30], [500, 545, 0], [575, 505, -30], [380, 560, 60], [470, 495, -10]];
+    return svg(
+      A(null, '3', null,
+        board(120, 150, 620, 480) + A('0', '3', 'slide', at(830, 540, -90, knife)) +
+        A('0', '0@0.5', null, at(250, 300, 0, onionHalf) + at(390, 340, 0, onionHalf)) + stag(onionBits, 0, 0.5, 0.85, 'pop', dice) +
+        A('1', '1@0.5', null, cloves.map(c => at(c[0], c[1], c[2], clove)).join('')) + stag(garlicBits, 1, 0.5, 0.85, 'pop', mince) +
+        A('2', '2@0.5', null, toms.map(c => at(c[0], c[1], c[2], sdt)).join('')) + stag(tomStrips, 2, 0.5, 0.85, 'pop', strip)) +
+      A('3', null, null,
+        pot(...PC) + A('3@0.4', null, null, liquid('#E7902F', 250).replace('/>', ' opacity=".32"/>')) + A('8@0.3', null, null, liquid('#EDBE55')) +
+        stag(P.onion, 4, 0.1, 0.45, 'drop', dice) + stag(P.garlic, 5, 0.15, 0.4, 'drop', mince, null, 4) + stag(P.strips, 5, 0.4, 0.75, 'drop', strip, null, 4) +
+        stag(P.orzo, 7, 0.12, 0.5, 'drop', grain, null, 8) +
+        A('9', null, null, scatter(11, PC[0], PC[1], 200, 200, 66, 60).map((p, i) => Lp('bubble', f(i / 11), `<circle cx="${f(p.x)}" cy="${f(p.y)}" r="15" fill="none" stroke="#FFF6D8" stroke-width="5"/>`)).join('')) +
+        steam([[400, 300], [560, 280], [470, 430], [610, 440]], '4', null) +
+        A('4', null, null, stir(0))) +
+      pour(8, '#F3DFA8', '#C77A1E', 'Broth', '#E9B94A') +
+      A('3', null, null, heat(2, 'medium')));
+  };
+
+  // Step 3: low heat, cream, Parmesan, spinach, season
+  ART.sauce = () => svg(
+    pot(...PC) + liquid('#E6BE62') + A('1@0.35', null, null, liquid('#F8E3B4')) + aromatics + put(P.orzo, grain) +
+    A('2@0.4', null, null, put(P.flecks, fleck)) +
+    P.leaves.map((p, i) => A(`3@${(0.1 + 0.7 * i / P.leaves.length).toFixed(2)}`, '4@0.55', 'drop', at(p.x, p.y, p.r, leaf))).join('') +
+    A('4@0.4', null, null, put(P.wilt, wilted)) +
+    steam([[400, 300], [560, 280], [470, 430]], null, null) + stir(1) +
+    pour(1, '#FFFFFF', '#4E86C6', 'Cream', '#FFFDF2') +
+    A('2', '3', 'slide', at(850, 150, 0, `<circle r="96" fill="#FFFFFF" stroke="#E0D2B5" stroke-width="8"/><circle r="72" fill="#F6DC84"/>` + put(scatter(16, 0, 0, 58, 58, 3, 20), fleck))) +
+    A('2', '3', null, [0, 1, 2, 3, 4, 5, 6, 7].map(i => Lp('fall', f(i / 8), at(360 + i * 40, 130 + (i % 3) * 24, i * 40, fleck, 1.3))).join('')) +
+    A('5', null, 'drop', shake(380, 62, '#7C9A4A', '#4F7A2A', 0) + shake(500, 62, '#FFFFFF', '#FFFFFF', 2) + shake(620, 62, '#55504B', '#3B3531', 4)) +
+    A(null, '0@0.45', null, heat(2, 'medium')) + A('0@0.45', null, 'pop', heat(1, 'low')));
+
+  const finished = () => liquid('#F8E3B4') + aromatics + put(P.orzo, grain) + put(P.flecks, fleck) + put(P.wilt, wilted);
+
+  // Step 4: chicken back in, stir, loosen, taste
+  ART.combine = () => svg(
+    pot(...PC) + finished() +
+    P.chick.map((p, i) => A(`0@${(0.15 + 0.65 * i / P.chick.length).toFixed(2)}`, null, 'drop', at(p.x, p.y, p.r, pieceGold))).join('') +
+    steam([[400, 300], [560, 280], [470, 430]], null, null) + stir(2) +
+    pour(2, '#F3DFA8', '#C77A1E', 'Broth', '#E9B94A', 0.2, 0.8) +
+    A('3@0.2', null, 'pop', at(96, 730, 0, `<rect x="-10" y="-150" width="20" height="150" rx="10" fill="#C9CED3" stroke="#8E979F" stroke-width="4"/><ellipse cy="-170" rx="38" ry="50" fill="#DDE2E6" stroke="#8E979F" stroke-width="4"/><ellipse cy="-170" rx="26" ry="36" fill="#F8E3B4"/>` + at(-6, -176, 20, grain) + at(8, -160, 80, grain)) +
+      Lp('pulse', 0, at(170, 520, 0, star)) + Lp('pulse', 2, at(40, 490, 0, star, 0.7))) +
+    heat(1, 'low'));
+
+  // one meal-prep container, w x h, filled
+  const box = (w, h, seed, n) => `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="32" fill="#F4F7F8" stroke="#B3C1C9" stroke-width="7"/><rect x="${-w / 2 + 20}" y="${-h / 2 + 20}" width="${w - 40}" height="${h - 40}" rx="20" fill="#F8E3B4"/>` +
+    put(scatter(n * 5, 0, 0, w / 2 - 40, h / 2 - 40, seed, 16), grain) + put(scatter(n, 0, 0, w / 2 - 54, h / 2 - 54, seed + 1, 48), wilted) +
+    put(scatter(n + 1, 0, 0, w / 2 - 46, h / 2 - 46, seed + 2, 30), strip) + put(scatter(n, 0, 0, w / 2 - 60, h / 2 - 56, seed + 3, 62), pieceGold);
+  const num = (x, y, n) => `<circle cx="${x}" cy="${y}" r="26" fill="#D8432E"/><text x="${x}" y="${y + 11}" text-anchor="middle" font-size="32" font-weight="900" fill="#fff">${n}</text>`;
+
+  ART.mealprep = () => { const pos = [[180, 215], [500, 215], [820, 215], [340, 545], [660, 545]];
+    return svg(pos.map((p, i) => A(`0@${(0.1 + 0.18 * i).toFixed(2)}`, null, 'pop', at(p[0], p[1], 0, box(290, 290, 100 + i * 7, 4)) + num(p[0] - 118, p[1] - 118, i + 1))).join('') +
+      A('1', null, null, `<rect x="23" y="58" width="314" height="314" rx="42" fill="none" stroke="#D8432E" stroke-width="8" stroke-dasharray="18 14"/>`)); };
+
+  // Storage and reheating: fridge, freezer, add broth, microwave
+  ART.storage = () => {
+    const small = (x, y, seed) => at(x, y, 0, box(250, 110, seed, 1));
+    const flake = `<path d="M0 -30 V30 M-26 -15 L26 15 M-26 15 L26 -15 M0 -30 l-8 8 M0 -30 l8 8 M0 30 l-8 -8 M0 30 l8 -8" stroke="#4E86C6" stroke-width="6" stroke-linecap="round" fill="none"/>`;
+    return svg(
+      A(null, '2', null,
+        `<rect x="290" y="40" width="420" height="680" rx="30" fill="#EAF1F4" stroke="#9FB0BA" stroke-width="8"/><path d="M290 250 H710" stroke="#9FB0BA" stroke-width="8"/>
+         <rect x="318" y="110" width="16" height="90" rx="8" fill="#9FB0BA"/><rect x="318" y="300" width="16" height="150" rx="8" fill="#9FB0BA"/>
+         <path d="M350 440 H690 M350 590 H690" stroke="#C9D6DC" stroke-width="6"/>` +
+        A('0', null, 'pop', small(520, 375, 201) + small(520, 525, 205) + small(520, 660, 209)) +
+        A('0@0.45', null, 'pop', `<rect x="725" y="420" width="250" height="84" rx="42" fill="#D8432E"/><text x="850" y="475" text-anchor="middle" font-size="40" font-weight="900" fill="#fff">3 to 4 days</text>`) +
+        A('1', null, 'pop', small(520, 150, 213) + at(660, 80, 0, flake, 0.8)) +
+        A('1@0.3', null, null, `<rect x="298" y="48" width="404" height="198" rx="24" fill="none" stroke="#4E86C6" stroke-width="8" stroke-dasharray="18 14"/>`)) +
+      A('2', '3', null, at(470, 400, 0, box(620, 440, 301, 7)) +
+        A('2@0.25', null, 'slide', at(850, 150, 0, `<rect x="-14" y="-110" width="28" height="170" rx="14" fill="#C9CED3" stroke="#8E979F" stroke-width="4" transform="rotate(50)"/><ellipse cx="-70" cy="76" rx="52" ry="40" fill="#DDE2E6" stroke="#8E979F" stroke-width="4"/><ellipse cx="-70" cy="76" rx="36" ry="26" fill="#EDBE55"/>`) +
+          [0, 1, 2].map(i => Lp('fall', f(i / 3), `<circle cx="${740 + i * 16}" cy="${262 + i * 10}" r="9" fill="#E9B94A"/>`)).join(''))) +
+      A('3', null, null,
+        `<rect x="110" y="150" width="780" height="460" rx="34" fill="#5C5550"/><rect x="150" y="190" width="520" height="380" rx="20" fill="#2B2826"/><circle cx="410" cy="380" r="160" fill="#3A3633"/>
+         <rect x="700" y="200" width="160" height="80" rx="12" fill="#1B1917"/>${[0, 1, 2, 3, 4, 5].map(i => `<circle cx="${738 + (i % 3) * 42}" cy="${340 + Math.floor(i / 3) * 50}" r="14" fill="#8A827B"/>`).join('')}
+         <rect x="710" y="470" width="140" height="80" rx="16" fill="#D8432E"/><text x="780" y="522" text-anchor="middle" font-size="32" font-weight="900" fill="#fff">Start</text>` +
+        at(410, 380, 0, box(300, 220, 301, 3)) + `<rect x="240" y="262" width="330" height="236" rx="34" fill="#DDE9EE" opacity=".55" stroke="#B3C1C9" stroke-width="6" transform="rotate(-6 405 380)"/>` +
+        A('3', '4', null, `<text x="780" y="256" text-anchor="middle" font-size="48" font-weight="900" fill="#7CF29A">2:00</text>`) +
+        A('4', null, null, `<text x="780" y="254" text-anchor="middle" font-size="38" font-weight="900" fill="#7CF29A">1 to 2</text>`) +
+        steam([[340, 330], [420, 310], [490, 340]], '4@0.4', null)));
+  };
+
+  // the finished bowl, for the title, nutrition and end screens
+  ART.hero = () => svg(
+    `<circle cx="500" cy="384" r="350" fill="#FFFFFF" stroke="#E4D5B7" stroke-width="10"/><circle cx="500" cy="384" r="292" fill="#F8E3B4" stroke="#EAD9B0" stroke-width="6"/>` +
+    put(scatter(170, 500, 384, 262, 262, 500, 17), grain) + put(scatter(26, 500, 384, 250, 250, 501, 30), strip) + put(scatter(22, 500, 384, 245, 245, 502, 52), wilted) +
+    put(scatter(16, 500, 384, 228, 228, 503, 76), pieceGold) + put(scatter(40, 500, 384, 255, 255, 504, 22), fleck) +
+    [[400, 300], [520, 270], [600, 340]].map((p, k) => Lp('steam', f(k / 3), at(p[0], p[1], 0, wisp))).join(''), '130 14 740 740');
+
+  window.ART = ART;
+})();
+</script>
+<script>
+// Creamy Sun-Dried Tomato Chicken Orzo, 5 meal prep portions. Cook-along script.
+// Each step is one action: h = big headline, lines = narration (a string, or [shown text, spoken text]).
+// Options: chips [[amount, name]], tip [term, explanation], timer {min, max, label}, hold (ms the video waits after the voice).
+const say = lines => lines.map(x => Array.isArray(x) ? { t: x[0], tts: x[1] } : { t: x });
+const a = (h, lines, o = {}) => Object.assign({ h, narr: say(lines) }, o);
+
+window.SCRIPT = {
+  id: 'orzo', title: 'Creamy Sun-Dried Tomato Chicken Orzo', fps: 30, gap: 1200,
+  scenes: [
+    { id: 'title', type: 'title', art: 'hero', kicker: '5 meal prep portions', title: 'Creamy Sun-Dried Tomato Chicken Orzo', sub: 'Cook along, one action at a time.', steps: [
+      { narr: say(['Creamy sun-dried tomato chicken orzo.', 'This makes 5 meal prep portions. Cook along with me, one action at a time.']) } ] },
+
+    { id: 'ready', type: 'ready', pill: 'Get ready', title: 'Everything out first',
+      groups: [
+        { name: 'Chicken, orzo and sauce', items: [['3 lb', 'chicken breast, boneless and skinless'], ['1 lb', 'orzo'], ['1 jar', 'sun-dried tomatoes in oil'], ['1 cup', 'heavy cream'], ['1 cup', 'grated Parmesan'], ['32 oz', 'chicken broth (1 carton)']] },
+        { name: 'Vegetables', items: [['1 bag', 'fresh spinach'], ['1', 'yellow onion'], ['4 to 5', 'garlic cloves']] },
+        { name: 'Seasonings and oil', items: [['21 Seasoning Salute', ''], ['Paprika', ''], ['Garlic powder', ''], ['Black pepper', ''], ['Salt', ''], ['Red pepper flakes', '(optional)'], ['Olive oil', '']] },
+        { name: 'Tools', items: [['Large skillet', ''], ['Large pot', ''], ['Knife and cutting board', ''], ['Meat thermometer', ''], ['Measuring cups and spoons', ''], ['Wooden spoon', ''], ['5 containers', '']] },
+      ],
+      steps: [
+        { narr: say(['First, take everything out, before you turn on the stove.']) },
+        { narr: say(['3 pounds of chicken breast, 1 pound of orzo, a jar of sun-dried tomatoes in oil, 1 cup of heavy cream, 1 cup of grated Parmesan, and a carton of chicken broth.']) },
+        { narr: say(['1 bag of fresh spinach, 1 yellow onion, and 4 to 5 garlic cloves.']) },
+        { narr: say(['Your seasonings. 21 Seasoning Salute, paprika, garlic powder, black pepper, and salt. Red pepper flakes are optional. And olive oil.']) },
+        { narr: say(['Your tools. A large skillet, a large pot, a knife and cutting board, a meat thermometer, measuring cups and spoons, a wooden spoon, and 5 containers.']) },
+      ] },
+
+    { id: 'chicken', type: 'cook', art: 'chicken', pill: 'Step 1 of 4', title: 'Cook the chicken', steps: [
+      a('Cut the chicken into bite-sized pieces', ['Step 1. Cut the chicken into bite-sized pieces.'],
+        { chips: [['3 lb', 'chicken breast']], tip: ['Bite-sized', 'About 1 inch. Keep the pieces the same size, so they cook evenly.'] }),
+      a('Season the chicken', ['Season with 2 teaspoons of 21 Seasoning Salute, 1 teaspoon of paprika, 1 teaspoon of garlic powder, and salt and pepper.'],
+        { chips: [['2 tsp', '21 Seasoning Salute'], ['1 tsp', 'paprika'], ['1 tsp', 'garlic powder'], ['½ tsp', 'black pepper'], ['Salt', 'to taste']] }),
+      a('Heat oil in a large skillet', ['Heat 1 to 2 tablespoons of olive oil in a large skillet.'],
+        { chips: [['1 to 2 tbsp', 'olive oil']], tip: ['While it heats', 'Wash your hands, the knife and the board with soap. Raw chicken touched them.'] }),
+      a('Cook the chicken in batches', [['Cook the chicken in batches, until the inside reaches 165°F.', 'Cook the chicken in batches, until the inside reaches 165 degrees Fahrenheit.'], 'Do not overcrowd the pan. Cooking in batches gives the chicken a better golden-brown outside.'],
+        { chips: [['165°F', 'inside the chicken']], tip: ["Don't overcrowd", 'Leave space between the pieces. Cook 2 or 3 batches.'] }),
+      a('Remove the chicken and set it aside', ['Remove the chicken, and set it aside.']),
+    ] },
+
+    { id: 'orzo', type: 'cook', art: 'orzo', pill: 'Step 2 of 4', title: 'Prepare the orzo', steps: [
+      a('Dice the onion', ['Step 2. Dice your onion.'], { chips: [['1', 'yellow onion']], tip: ['Dice', 'Cut into small cubes, about the size of a pea.'] }),
+      a('Mince the garlic', ['Mince 4 to 5 garlic cloves.'], { chips: [['4 to 5', 'garlic cloves']], tip: ['Mince', 'Chop it as small as you can.'] }),
+      a('Chop the sun-dried tomatoes', ['Chop about a half to three quarters of a cup of sun-dried tomatoes.'], { chips: [['½ to ¾ cup', 'sun-dried tomatoes']] }),
+      a('Add tomato oil to a large pot', ['Add 2 tablespoons of the sun-dried tomato oil to a large pot.'], { chips: [['2 tbsp', 'oil from the tomato jar']] }),
+      a('Saute the onion', ['Saute the onion for 3 to 4 minutes.'], { timer: { min: 3, max: 4, label: 'Onion' }, tip: ['Saute', 'Cook in a little oil and stir often, until soft.'], hold: 2600 }),
+      a('Add the garlic and the tomatoes', ['Add the garlic and the sun-dried tomatoes.']),
+      a('Stir for 1 more minute', ['Stir for another minute.'], { timer: { min: 1, max: 1, label: 'Garlic and tomatoes' }, hold: 2600 }),
+      a('Add the orzo and toast it', ['Add 1 pound of orzo, and toast it for 1 to 2 minutes.'], { chips: [['1 lb', 'orzo']], timer: { min: 1, max: 2, label: 'Toast the orzo' }, tip: ['Toast', 'Stir the dry orzo in the hot pot.'], hold: 2600 }),
+      a('Pour in the chicken broth', ['Pour in about 4 cups of chicken broth.'], { chips: [['About 4 cups', 'chicken broth']] }),
+      a('Simmer and stir often', ['Simmer for 9 to 12 minutes, and stir frequently.', 'Add more broth as needed. Orzo absorbs liquid quickly, especially in a large batch.'],
+        { timer: { min: 9, max: 12, label: 'Simmer the orzo' }, tip: ['Simmer', 'Small, gentle bubbles. Add more broth if it looks dry.'], hold: 2600 }),
+    ] },
+
+    { id: 'sauce', type: 'cook', art: 'sauce', pill: 'Step 3 of 4', title: 'Make the creamy sauce', steps: [
+      a('Turn the heat down to low', ['Step 3. Once the orzo is tender, reduce the heat to low.'], { tip: ['Tender', 'Soft when you bite it, with no hard center.'] }),
+      a('Stir in the heavy cream', ['Stir in 1 cup of heavy cream.'], { chips: [['1 cup', 'heavy cream']] }),
+      a('Add the Parmesan', ['Add 1 cup of Parmesan.'], { chips: [['1 cup', 'grated Parmesan']] }),
+      a('Add the spinach, a little at a time', ['Add the spinach gradually.'], { chips: [['1 bag', 'fresh spinach']] }),
+      a('Stir until the spinach wilts', ['Stir until the spinach wilts.'], { tip: ['Wilt', 'The leaves turn soft, dark and small.'] }),
+      a('Season to taste', ['Add more 21 Seasoning Salute, salt, and pepper, to taste.'], { tip: ['To taste', 'Try a spoonful. Add a little, stir, and try again.'] }),
+    ] },
+
+    { id: 'combine', type: 'cook', art: 'combine', pill: 'Step 4 of 4', title: 'Combine everything', steps: [
+      a('Add the chicken back in', ['Step 4. Add the cooked chicken back into the orzo.']),
+      a('Stir everything together', ['Stir thoroughly.']),
+      a('Too thick? Add a little broth', ['Add a little chicken broth, if the mixture looks too thick.']),
+      a('Taste and adjust the seasoning', ['Taste, and adjust the seasoning.'], { chips: [['Optional', 'red pepper flakes']] }),
+    ] },
+
+    { id: 'mealprep', type: 'cook', art: 'mealprep', pill: 'Meal prep', title: '5 containers', steps: [
+      a('Divide evenly into 5 containers', ['Divide everything evenly into 5 containers.']),
+      a('What is in each meal', ['Each meal has about 9.6 ounces of chicken, 3.2 ounces of orzo, and 3 to 4 tablespoons of Parmesan.'],
+        { chips: [['9.6 oz', 'chicken (raw weight)'], ['3.2 oz', 'orzo (dry weight)'], ['3 to 4 tbsp', 'Parmesan']] }),
+    ] },
+
+    { id: 'storage', type: 'cook', art: 'storage', pill: 'Storage', title: 'Store and reheat', steps: [
+      a('Fridge: up to 3 to 4 days', ['Refrigerate the meals for up to 3 to 4 days.']),
+      a('Freeze the meals for later in the week', ['Freeze any portions for later in the week, promptly after cooking.']),
+      a('To reheat, add broth or water', ['To reheat, add 1 to 2 tablespoons of chicken broth or water.'], { chips: [['1 to 2 tbsp', 'broth or water']], tip: ['Why?', 'Orzo absorbs the sauce in the fridge.'] }),
+      a('Cover loosely, microwave 2 minutes', ['Cover loosely, and microwave for 2 minutes.'], { chips: [['2 min', 'microwave']] }),
+      a('Stir, then 1 to 2 more minutes', ['Stir. Then microwave another 1 to 2 minutes, until steaming hot.'], { chips: [['1 to 2 min', 'until steaming hot']] }),
+    ] },
+
+    { id: 'nutrition', type: 'cook', art: 'hero', pill: 'Nutrition', title: 'Estimate per meal', steps: [
+      a('In each meal', ['Each meal has about 850 to 950 calories, and 75 to 85 grams of protein.', 'The real numbers depend on your chicken, cream and Parmesan brands.'],
+        { stats: [['850 to 950', 'calories'], ['75 to 85 g', 'protein'], ['85 to 95 g', 'carbs'], ['25 to 30 g', 'fat']] }),
+    ] },
+
+    { id: 'end', type: 'title', art: 'hero', kicker: 'One last tip', title: "Don't skimp on the sun-dried tomatoes or the Parmesan", sub: 'Those two ingredients really make this recipe. Enjoy!', steps: [
+      { narr: say(['One last tip. Do not skimp on the sun-dried tomatoes or the Parmesan. Those two ingredients really make this recipe.', 'Enjoy your meal.']) } ] },
+  ],
+};
+</script>
+<script>
+window.TIMING = {
+ "title/0/0": {
+  "file": "audio/c8e1578c8a3a.m4a",
+  "dur": 2592,
+  "text": "Creamy sun-dried tomato chicken orzo."
+ },
+ "title/0/1": {
+  "file": "audio/a1a0be102d7d.m4a",
+  "dur": 4896,
+  "text": "This makes 5 meal prep portions. Cook along with me, one action at a time."
+ },
+ "ready/0/0": {
+  "file": "audio/ab110beaf9eb.m4a",
+  "dur": 3600,
+  "text": "First, take everything out, before you turn on the stove."
+ },
+ "ready/1/0": {
+  "file": "audio/549a0aaeb1d0.m4a",
+  "dur": 10512,
+  "text": "3 pounds of chicken breast, 1 pound of orzo, a jar of sun-dried tomatoes in oil, 1 cup of heavy cream, 1 cup of grated Parmesan, and a carton of chicken broth."
+ },
+ "ready/2/0": {
+  "file": "audio/37f6b7b5b2e0.m4a",
+  "dur": 4992,
+  "text": "1 bag of fresh spinach, 1 yellow onion, and 4 to 5 garlic cloves."
+ },
+ "ready/3/0": {
+  "file": "audio/7f8370368084.m4a",
+  "dur": 9336,
+  "text": "Your seasonings. 21 Seasoning Salute, paprika, garlic powder, black pepper, and salt. Red pepper flakes are optional. And olive oil."
+ },
+ "ready/4/0": {
+  "file": "audio/6a80277f1863.m4a",
+  "dur": 10176,
+  "text": "Your tools. A large skillet, a large pot, a knife and cutting board, a meat thermometer, measuring cups and spoons, a wooden spoon, and 5 containers."
+ },
+ "chicken/0/0": {
+  "file": "audio/bd66b767e5d1.m4a",
+  "dur": 3744,
+  "text": "Step 1. Cut the chicken into bite-sized pieces."
+ },
+ "chicken/1/0": {
+  "file": "audio/3540217a7bf0.m4a",
+  "dur": 8280,
+  "text": "Season with 2 teaspoons of 21 Seasoning Salute, 1 teaspoon of paprika, 1 teaspoon of garlic powder, and salt and pepper."
+ },
+ "chicken/2/0": {
+  "file": "audio/f86feb771d29.m4a",
+  "dur": 3648,
+  "text": "Heat 1 to 2 tablespoons of olive oil in a large skillet."
+ },
+ "chicken/3/0": {
+  "file": "audio/5dcf5f7e3f17.m4a",
+  "dur": 5736,
+  "text": "Cook the chicken in batches, until the inside reaches 165 degrees Fahrenheit."
+ },
+ "chicken/3/1": {
+  "file": "audio/5131fee197a9.m4a",
+  "dur": 5568,
+  "text": "Do not overcrowd the pan. Cooking in batches gives the chicken a better golden-brown outside."
+ },
+ "chicken/4/0": {
+  "file": "audio/128a32642eb5.m4a",
+  "dur": 2424,
+  "text": "Remove the chicken, and set it aside."
+ },
+ "orzo/0/0": {
+  "file": "audio/fa5a2fa83acb.m4a",
+  "dur": 2064,
+  "text": "Step 2. Dice your onion."
+ },
+ "orzo/1/0": {
+  "file": "audio/f39227103362.m4a",
+  "dur": 2112,
+  "text": "Mince 4 to 5 garlic cloves."
+ },
+ "orzo/2/0": {
+  "file": "audio/8f7d6c2d85ca.m4a",
+  "dur": 3864,
+  "text": "Chop about a half to three quarters of a cup of sun-dried tomatoes."
+ },
+ "orzo/3/0": {
+  "file": "audio/1cbbcdfee47d.m4a",
+  "dur": 4152,
+  "text": "Add 2 tablespoons of the sun-dried tomato oil to a large pot."
+ },
+ "orzo/4/0": {
+  "file": "audio/17d9b05f904b.m4a",
+  "dur": 2664,
+  "text": "Saute the onion for 3 to 4 minutes."
+ },
+ "orzo/5/0": {
+  "file": "audio/76fc2ae22a9c.m4a",
+  "dur": 2568,
+  "text": "Add the garlic and the sun-dried tomatoes."
+ },
+ "orzo/6/0": {
+  "file": "audio/771204dc13f4.m4a",
+  "dur": 1560,
+  "text": "Stir for another minute."
+ },
+ "orzo/7/0": {
+  "file": "audio/ef39528f0da6.m4a",
+  "dur": 3912,
+  "text": "Add 1 pound of orzo, and toast it for 1 to 2 minutes."
+ },
+ "orzo/8/0": {
+  "file": "audio/f335ff8edad5.m4a",
+  "dur": 2400,
+  "text": "Pour in about 4 cups of chicken broth."
+ },
+ "orzo/9/0": {
+  "file": "audio/befeabd064c5.m4a",
+  "dur": 3480,
+  "text": "Simmer for 9 to 12 minutes, and stir frequently."
+ },
+ "orzo/9/1": {
+  "file": "audio/0e2ed7fd8b99.m4a",
+  "dur": 5880,
+  "text": "Add more broth as needed. Orzo absorbs liquid quickly, especially in a large batch."
+ },
+ "sauce/0/0": {
+  "file": "audio/6e9039bae511.m4a",
+  "dur": 4368,
+  "text": "Step 3. Once the orzo is tender, reduce the heat to low."
+ },
+ "sauce/1/0": {
+  "file": "audio/b6e6c0d80f9a.m4a",
+  "dur": 2328,
+  "text": "Stir in 1 cup of heavy cream."
+ },
+ "sauce/2/0": {
+  "file": "audio/b04297256961.m4a",
+  "dur": 1632,
+  "text": "Add 1 cup of Parmesan."
+ },
+ "sauce/3/0": {
+  "file": "audio/7ce4c88fb553.m4a",
+  "dur": 1704,
+  "text": "Add the spinach gradually."
+ },
+ "sauce/4/0": {
+  "file": "audio/d406803e1619.m4a",
+  "dur": 1896,
+  "text": "Stir until the spinach wilts."
+ },
+ "sauce/5/0": {
+  "file": "audio/f677c2688f40.m4a",
+  "dur": 4632,
+  "text": "Add more 21 Seasoning Salute, salt, and pepper, to taste."
+ },
+ "combine/0/0": {
+  "file": "audio/df7936a76657.m4a",
+  "dur": 3480,
+  "text": "Step 4. Add the cooked chicken back into the orzo."
+ },
+ "combine/1/0": {
+  "file": "audio/b0d32edecdcf.m4a",
+  "dur": 1224,
+  "text": "Stir thoroughly."
+ },
+ "combine/2/0": {
+  "file": "audio/f32292b7bdc6.m4a",
+  "dur": 3168,
+  "text": "Add a little chicken broth, if the mixture looks too thick."
+ },
+ "combine/3/0": {
+  "file": "audio/2fe05833a26f.m4a",
+  "dur": 2160,
+  "text": "Taste, and adjust the seasoning."
+ },
+ "mealprep/0/0": {
+  "file": "audio/edac247d6964.m4a",
+  "dur": 3216,
+  "text": "Divide everything evenly into 5 containers."
+ },
+ "mealprep/1/0": {
+  "file": "audio/dbe5984816a3.m4a",
+  "dur": 7536,
+  "text": "Each meal has about 9.6 ounces of chicken, 3.2 ounces of orzo, and 3 to 4 tablespoons of Parmesan."
+ },
+ "storage/0/0": {
+  "file": "audio/a747d6d6328a.m4a",
+  "dur": 3288,
+  "text": "Refrigerate the meals for up to 3 to 4 days."
+ },
+ "storage/1/0": {
+  "file": "audio/fc592f591d15.m4a",
+  "dur": 3912,
+  "text": "Freeze any portions for later in the week, promptly after cooking."
+ },
+ "storage/2/0": {
+  "file": "audio/08272ab19ee1.m4a",
+  "dur": 4272,
+  "text": "To reheat, add 1 to 2 tablespoons of chicken broth or water."
+ },
+ "storage/3/0": {
+  "file": "audio/bba9e84ec918.m4a",
+  "dur": 2928,
+  "text": "Cover loosely, and microwave for 2 minutes."
+ },
+ "storage/4/0": {
+  "file": "audio/17e1a146f9fd.m4a",
+  "dur": 4536,
+  "text": "Stir. Then microwave another 1 to 2 minutes, until steaming hot."
+ },
+ "nutrition/0/0": {
+  "file": "audio/b82c646d8cc0.m4a",
+  "dur": 7176,
+  "text": "Each meal has about 850 to 950 calories, and 75 to 85 grams of protein."
+ },
+ "nutrition/0/1": {
+  "file": "audio/e3a0968e82c0.m4a",
+  "dur": 4032,
+  "text": "The real numbers depend on your chicken, cream and Parmesan brands."
+ },
+ "end/0/0": {
+  "file": "audio/2818996c70ec.m4a",
+  "dur": 7152,
+  "text": "One last tip. Do not skimp on the sun-dried tomatoes or the Parmesan. Those two ingredients really make this recipe."
+ },
+ "end/0/1": {
+  "file": "audio/f7b91a0d45df.m4a",
+  "dur": 1224,
+  "text": "Enjoy your meal."
+ }
+};
+</script>
+<script>
+// Recipe cook-along player.
+// Loaded after art.js (window.ART), deck.js (window.SCRIPT) and timing.js (window.TIMING).
+// Render mode (?render=1&layout=wide|tall): exposes window.seek(ms), lineStarts(), TOTAL, STOPS, READY.
+// Live mode: tap-to-continue cook-along page with timers, checklist, wake lock and saved progress.
+// All markup is built from the deck and art files that ship with this page. Nothing comes from user input.
+(function () {
+  const S = window.SCRIPT, T = window.TIMING || {}, ART = window.ART || {};
+  const Q = new URLSearchParams(location.search);
+  const RENDER = Q.has('render'); window.RENDER = RENDER;
+  const SIZE = { wide: [1920, 1080], tall: [1080, 1920] };
+  const root = document.documentElement;
+  const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+  const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+  const stage = document.getElementById('stage'), subs = document.getElementById('subs'), bar = document.getElementById('bar');
+  const $ = h => document.createRange().createContextualFragment(h.trim()).firstElementChild;
+
+  // ---------- timeline ----------
+  const GAP = S.gap ?? 1200, LINE_GAP = 250;
+  let total = 0; const STOPS = [];
+  for (const sc of S.scenes) {
+    sc.start = total; let st = 0;
+    sc.steps.forEach((step, si) => {
+      step.start = st; step.lines = []; let l = 0;
+      (step.narr || []).forEach((ln, li) => {
+        const tm = T[`${sc.id}/${si}/${li}`] || { dur: 900 + 60 * ln.t.length };
+        step.lines.push({ t: ln.t, start: l, dur: tm.dur, file: tm.file }); l += tm.dur + LINE_GAP;
+      });
+      step.speech = Math.max(0, l - LINE_GAP);
+      step.dur = step.speech + (step.hold ?? GAP);
+      STOPS.push({ sc, si, step, at: sc.start + st, end: sc.start + st + step.dur });
+      st += step.dur;
+    });
+    sc.dur = st; total += st;
+  }
+  window.TOTAL = total; window.STOPS = STOPS;
+
+  // ---------- scene builders ----------
+  const bulb = '<svg viewBox="0 0 24 24" fill="none" stroke="#B5790A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1.1 2.2h5c.1-1 .5-1.7 1.1-2.2A6 6 0 0 0 12 3z"/></svg>';
+  const hdr = sc => `<div class="hdr"><span class="pill">${sc.pill}</span><span class="ttl">${sc.title}</span><span class="cnt"></span></div>`;
+  const timer = (sc, i, st) => { const tm = st.timer; const range = tm.min === tm.max ? `${tm.min} min` : `${tm.min} to ${tm.max} min`;
+    return `<div class="timer" data-in="${i}+500" data-timer='${JSON.stringify({ id: sc.id + '-' + i, min: tm.min, max: tm.max, label: tm.label })}'>
+      <svg class="ring" viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="46"/><circle class="arc" cx="60" cy="60" r="46" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 60 60)"/><path class="hand" d="M60 60V32M60 60l15 9"/></svg>
+      <div class="tm-txt"><div class="tm-big">${range}</div><div class="tm-sub">${tm.label}</div><div class="tm-live">Tap to start the timer</div></div></div>`; };
+  const act = (sc, st, i) => `<div class="act" data-only="${i}">
+      <div class="head" data-in="${i}">${st.h}</div>
+      ${st.chips ? `<div class="chips">${st.chips.map((c, j) => `<span class="chip" data-in="${i}+${300 + j * 220}"><b>${c[0]}</b> ${c[1]}</span>`).join('')}</div>` : ''}
+      ${st.stats ? `<div class="stats">${st.stats.map((s, j) => `<div class="stat" data-in="${i}+${300 + j * 260}" data-fx="pop"><div class="num">${s[0]}</div><div class="unit">${s[1]}</div></div>`).join('')}</div>` : ''}
+      ${st.timer ? timer(sc, i, st) : ''}
+      ${st.tip ? `<div class="tip" data-in="${i}@0.45"><div class="tip-term">${bulb}<span>${st.tip[0]}</span></div><div class="tip-def">${st.tip[1]}</div></div>` : ''}
+    </div>`;
+  const B = Object.assign({
+    title: sc => `<div class="title-wrap"><div class="hero">${ART[sc.art](sc)}</div><div class="title-txt">
+        <div class="kicker" data-in="0">${sc.kicker}</div><h1 data-in="0+250">${sc.title}</h1><div class="sub" data-in="0@0.55">${sc.sub}</div></div></div>`,
+    ready: sc => `${hdr(sc)}<div class="ready">${sc.groups.map((g, gi) => `<div class="grp g${gi}" data-in="${gi + 1}"><h3>${g.name}</h3>${g.items.map((it, j) =>
+        `<div class="ck" data-ck="${sc.id}-${gi}-${j}"><span class="box"><svg viewBox="0 0 24 24"><path class="tick"${RENDER ? ` data-in="${gi + 1}@${((j + 1) / (g.items.length + 0.6)).toFixed(2)}"` : ''} d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl"><b>${it[0]}</b> ${it[1] || ''}</span></div>`).join('')}</div>`).join('')}</div>`,
+    cook: sc => `${hdr(sc)}<div class="body"><div class="art">${ART[sc.art](sc)}</div><div class="info">${sc.steps.map((st, i) => act(sc, st, i)).join('')}</div></div>`,
+  }, window.BUILDERS || {});
+
+  // "k" = start of step k, "k+ms" = ms after it, "k@f" = fraction f of step k's speech
+  const TIME_RE = /^(\d+)(?:([+@])([\d.]+))?$/;
+  for (const sc of S.scenes) {
+    if (!B[sc.type]) throw new Error('No builder for scene type ' + sc.type);
+    const el = $(`<div class="scene sc-${sc.type}" id="sc-${sc.id}">${B[sc.type](sc)}</div>`);
+    stage.insertBefore(el, subs); sc.el = el;
+    const tOf = s => { const m = String(s).match(TIME_RE); if (!m) throw new Error(`bad time "${s}" in scene ${sc.id}`);
+      const st = sc.steps[+m[1]]; if (!st) return Infinity;
+      return st.start + (m[2] === '+' ? +m[3] : m[2] === '@' ? +m[3] * (st.speech || st.dur) : 0); };
+    sc.anim = [...el.querySelectorAll('[data-in],[data-out],[data-only]')].map(e => {
+      const only = e.dataset.only, svg = e instanceof SVGElement;
+      if (only !== undefined) return { el: e, only: true, tin: sc.steps[+only].start, tout: sc.steps[+only + 1] ? sc.steps[+only + 1].start : Infinity };
+      return { el: e, tin: e.dataset.in !== undefined ? tOf(e.dataset.in) : -1e9, tout: e.dataset.out !== undefined ? tOf(e.dataset.out) : Infinity, fx: e.dataset.fx || (svg ? 'fade' : 'rise') };
+    });
+    sc.loops = [...el.querySelectorAll('[data-loop]')].map(e => { const o = (e.dataset.o || '0,0').split(',').map(Number); return { el: e, kind: e.dataset.loop, ph: +(e.dataset.ph || 0), ox: o[0], oy: o[1] }; });
+    sc.cnt = el.querySelector('.cnt');
+  }
+
+  function apply(sc, t, lt) {
+    for (const a of sc.anim) {
+      if (a.only) { const on = t >= a.tin && t < a.tout; if (a.on !== on) { a.on = on; a.el.style.display = on ? '' : 'none'; } continue; }
+      const p = ease((t - a.tin) / 420); let o = clamp((t - a.tin) / 300); if (a.tout < Infinity) o *= 1 - clamp((t - a.tout) / 260);
+      if (a.o === o && a.p === p) continue; a.o = o; a.p = p;
+      const s = a.el.style; s.opacity = o;
+      if (a.fx === 'rise') s.transform = p < 1 ? `translateY(${(16 * (1 - p)).toFixed(1)}px)` : 'none';
+      else if (a.fx === 'drop') s.transform = p < 1 ? `translateY(${(-120 * (1 - p)).toFixed(1)}px)` : 'none';
+      else if (a.fx === 'pop') s.transform = p < 1 ? `scale(${(0.5 + 0.5 * p).toFixed(3)})` : 'none';
+      else if (a.fx === 'slide') s.transform = p < 1 ? `translateX(${(140 * (1 - p)).toFixed(1)}px)` : 'none';
+    }
+    for (const L of sc.loops) {
+      const s = L.el.style;
+      switch (L.kind) {
+        case 'sway': L.el.setAttribute('transform', `rotate(${(Math.sin(lt / 420 + L.ph) * 16).toFixed(2)} ${L.ox} ${L.oy})`); break;
+        case 'steam': { const u = (lt / 2800 + L.ph) % 1; s.transform = `translateY(${(-80 * u).toFixed(1)}px)`; s.opacity = (Math.sin(Math.PI * u) * 0.75).toFixed(3); break; }
+        case 'bubble': { const u = (lt / 1500 + L.ph) % 1; s.transform = `scale(${(0.35 + 0.75 * u).toFixed(3)})`; s.opacity = (1 - u).toFixed(3); break; }
+        case 'fall': { const u = (lt / 950 + L.ph) % 1; s.transform = `translateY(${(120 * u).toFixed(1)}px)`; s.opacity = (1 - u * u).toFixed(3); break; }
+        case 'shake': s.transform = `rotate(${(Math.sin(lt / 110 + L.ph) * 6).toFixed(2)}deg)`; break;
+        case 'pulse': s.transform = `scale(${(1 + 0.05 * Math.sin(lt / 320 + L.ph)).toFixed(3)})`; break;
+      }
+    }
+  }
+
+  // ---------- seek ----------
+  let cur = null, subTxt = null;
+  window.seek = function (ms, lt) {
+    ms = clamp(ms, 0, total - 1);
+    const sc = S.scenes.find(s => ms >= s.start && ms < s.start + s.dur) || S.scenes[S.scenes.length - 1];
+    const t = ms - sc.start;
+    let si = sc.steps.findIndex(st => t >= st.start && t < st.start + st.dur); if (si < 0) si = sc.steps.length - 1;
+    const step = sc.steps[si], tStep = t - step.start;
+    if (cur !== sc) { S.scenes.forEach(s => s.el.classList.toggle('on', s === sc)); cur = sc; }
+    apply(sc, t, lt ?? t);
+    if (sc.cnt) { const c = sc.steps.length > 1 ? `${si + 1} / ${sc.steps.length}` : ''; if (sc.cnt.textContent !== c) sc.cnt.textContent = c; }
+    if (RENDER && step.timer) { const arc = sc.el.querySelector(`.act[data-only="${si}"] .arc`); if (arc) arc.setAttribute('stroke-dashoffset', (100 - 100 * clamp(tStep / step.dur)).toFixed(1)); }
+    let ln = null; for (const l of step.lines) if (tStep >= l.start) ln = l;
+    const txt = ln ? ln.t : ''; if (txt !== subTxt) { subTxt = txt; subs.textContent = txt; subs.classList.toggle('long', txt.length > 100); }
+    bar.style.width = (ms / total * 100).toFixed(2) + '%';
+    return { scene: sc.id, step: si };
+  };
+  window.lineStarts = () => STOPS.flatMap(s => s.step.lines.filter(l => l.file).map(l => ({ file: l.file, at: s.at + l.start, dur: l.dur })));
+  // layout check used by render.mjs --steps: visible things that leave the stage or run into the subtitle bar
+  window.overflowReport = () => { const out = []; if (!cur) return out; const lim = subs.getBoundingClientRect().top + 1, W = stage.getBoundingClientRect().right + 1;
+    cur.el.querySelectorAll('.hdr, .act > *, .grp, .title-txt > *, .hero').forEach(e => { const r = e.getBoundingClientRect(); if (!r.width || getComputedStyle(e).opacity === '0') return;
+      if (r.bottom > lim || r.right > W || r.left < -1) out.push(`${e.className}: bottom ${Math.round(r.bottom)} (limit ${Math.round(lim)}), right ${Math.round(r.right)}`); });
+    return out; };
+
+  // ---------- render mode ----------
+  if (RENDER) { root.dataset.layout = Q.get('layout') === 'tall' ? 'tall' : 'wide'; seek(0); window.READY = true; return; }
+
+  // ---------- live cook-along mode ----------
+  root.classList.add('live');
+  const KEY = 'cook-' + S.id; let store = {}; try { store = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+  store.ck = store.ck || {}; store.timers = store.timers || {};
+
+  const ctl = $(`<div id="ctl"><div id="tray"></div><div id="btns"><button id="b-back">Back</button><button id="b-rep">Repeat</button><button id="b-next">Next</button></div></div>`);
+  document.body.appendChild(ctl);
+  const tray = ctl.querySelector('#tray'), bBack = ctl.querySelector('#b-back'), bRep = ctl.querySelector('#b-rep'), bNext = ctl.querySelector('#b-next');
+  const resume = (store.idx || 0) > 0;
+  const startEl = $(`<div id="start"><div class="st-card"><div class="st-kicker">Cook along</div><div class="st-title"></div>
+    <div class="st-hint">Turn your sound on. After each action, tap the screen or press Next.</div>
+    <button id="b-start">${resume ? 'Continue cooking' : 'Start cooking'}</button>${resume ? '<button id="b-reset">Start from the beginning</button>' : ''}</div></div>`);
+  startEl.querySelector('.st-title').textContent = S.title;
+  document.body.appendChild(startEl);
+
+  const fit = () => {
+    const aw = innerWidth, ah = innerHeight - ctl.offsetHeight;
+    const lay = aw / ah < 0.85 ? 'tall' : 'wide'; root.dataset.layout = lay; const [W, H] = SIZE[lay];
+    const s = Math.min(aw / W, ah / H);
+    stage.style.transform = `scale(${s})`; stage.style.left = ((aw - W * s) / 2) + 'px'; stage.style.top = ((ah - H * s) / 2) + 'px';
+  };
+  addEventListener('resize', fit); addEventListener('orientationchange', fit);
+
+  let idx = clamp(store.idx || 0, 0, STOPS.length - 1), playing = false, t0 = 0, linesDone = 0, started = false;
+  const audio = new Audio(); audio.preload = 'auto';
+  let actx = null, wl = null;
+  const lock = async () => { try { if (navigator.wakeLock) wl = await navigator.wakeLock.request('screen'); } catch (e) {} };
+  document.addEventListener('visibilitychange', () => { if (started && document.visibilityState === 'visible') lock(); });
+  const beep = () => { if (!actx) return; const now = actx.currentTime;
+    for (let i = 0; i < 3; i++) { const o = actx.createOscillator(), g = actx.createGain(), a = now + i * 0.45; o.type = 'sine'; o.frequency.value = 880; o.connect(g); g.connect(actx.destination);
+      g.gain.setValueAtTime(0.0001, a); g.gain.exponentialRampToValueAtTime(0.5, a + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, a + 0.35); o.start(a); o.stop(a + 0.4); } };
+
+  const curMs = () => { const s = STOPS[idx]; return playing ? Math.min(s.at + performance.now() - t0, s.end - 30) : s.end - 30; };
+  const pump = ms => { const s = STOPS[idx], tStep = ms - s.at, ls = s.step.lines;
+    while (linesDone < ls.length && tStep >= ls[linesDone].start) { const l = ls[linesDone++]; if (l.file) { audio.src = l.file; audio.play().catch(() => {}); } }
+    if (ms >= s.end - 30) { playing = false; root.classList.add('wait'); } };
+  const buttons = () => { bBack.disabled = idx === 0; bNext.disabled = idx === STOPS.length - 1; bNext.textContent = idx === STOPS.length - 1 ? 'Done' : 'Next'; };
+  const go = i => { idx = clamp(i, 0, STOPS.length - 1); store.idx = idx; save(); linesDone = 0; t0 = performance.now(); playing = true; root.classList.remove('wait');
+    audio.pause(); pump(STOPS[idx].at); buttons();
+    const nx = STOPS[idx + 1]; if (nx && location.protocol.startsWith('http')) nx.step.lines.forEach(l => l.file && fetch(l.file).catch(() => {})); };
+  const next = () => { if (idx < STOPS.length - 1) go(idx + 1); };
+  const back = () => { if (idx > 0) go(idx - 1); };
+
+  // timers
+  const fmt = ms => { const s = Math.max(0, Math.round(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  let lastTick = 0;
+  const drawTray = () => { tray.replaceChildren(...Object.entries(store.timers).map(([id, t]) => {
+    const c = $('<div class="tchip"><span class="tl"></span><b></b><button aria-label="Stop timer">×</button></div>'); c.dataset.id = id; c.querySelector('.tl').textContent = t.label; return c; })); lastTick = 0; };
+  const startTimer = d => { if (store.timers[d.id]) return; store.timers[d.id] = { label: d.label, min: d.min, max: d.max, end: Date.now() + d.min * 60000, rung: false }; save(); drawTray(); fit(); };
+  tray.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; delete store.timers[b.parentElement.dataset.id]; save(); drawTray(); fit(); });
+  const timersTick = now => {
+    if (now - lastTick < 250) return; lastTick = now; const wall = Date.now();
+    tray.querySelectorAll('.tchip').forEach(c => { const t = store.timers[c.dataset.id]; if (!t) return; const left = t.end - wall;
+      if (left <= 0 && !t.rung) { t.rung = true; save(); beep(); if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); }
+      c.classList.toggle('rung', left <= 0); c.querySelector('.tl').textContent = left <= 0 ? t.label + ': check now' : t.label; c.querySelector('b').textContent = left > 0 ? fmt(left) : '+' + fmt(-left); });
+    if (cur) cur.el.querySelectorAll('.timer').forEach(card => { const d = JSON.parse(card.dataset.timer), t = store.timers[d.id], live = card.querySelector('.tm-live'), arc = card.querySelector('.arc');
+      if (!t) { live.textContent = 'Tap to start the timer'; arc.setAttribute('stroke-dashoffset', 100); return; }
+      const left = t.end - wall; live.textContent = left > 0 ? fmt(left) + ' left' : 'Time is up. Check it.'; arc.setAttribute('stroke-dashoffset', (100 * clamp(left / (t.min * 60000))).toFixed(1)); });
+  };
+
+  // checklist
+  document.querySelectorAll('.ck').forEach(c => c.classList.toggle('done', !!store.ck[c.dataset.ck]));
+  stage.addEventListener('click', e => {
+    const ck = e.target.closest('.ck'); if (ck) { const on = !ck.classList.contains('done'); ck.classList.toggle('done', on); if (on) store.ck[ck.dataset.ck] = 1; else delete store.ck[ck.dataset.ck]; save(); return; }
+    const tm = e.target.closest('.timer'); if (tm) { startTimer(JSON.parse(tm.dataset.timer)); return; }
+    next();
+  });
+  bNext.addEventListener('click', next); bBack.addEventListener('click', back); bRep.addEventListener('click', () => go(idx));
+  document.addEventListener('keydown', e => { if (!started) return;
+    if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft') back(); else if (e.key === 'r' || e.key === 'R') go(idx); });
+  const begin = from => { started = true; startEl.remove();
+    try { actx = new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch (e) {}
+    lock(); go(from); };
+  startEl.querySelector('#b-start').addEventListener('click', () => begin(idx));
+  const rs = startEl.querySelector('#b-reset'); if (rs) rs.addEventListener('click', () => { store.ck = {}; store.timers = {}; document.querySelectorAll('.ck').forEach(c => c.classList.remove('done')); drawTray(); begin(0); });
+
+  drawTray(); fit(); buttons();
+  const frame = now => { const ms = curMs(); if (playing) pump(ms); seek(ms, now); timersTick(now); requestAnimationFrame(frame); };
+  requestAnimationFrame(frame);
+  window.READY = true;
+})();
+</script>
+</body></html>
